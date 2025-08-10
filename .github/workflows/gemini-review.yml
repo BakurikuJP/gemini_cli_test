@@ -1,0 +1,27 @@
+# このワークフローの名前を定義します
+name: Gemini PR Review
+
+# このワークフローをいつ実行するかを定義します
+on:
+  # プルリクエストがオープンされたとき、または同期されたときに実行します
+  pull_request:
+    types: [opened, synchronize]
+
+# 実行する一連のジョブ（タスク）を定義します
+jobs:
+  review:
+    # ワークフローを実行する環境を定義します
+    runs-on: ubuntu-latest
+    steps:
+      # GitHub Actionsの公式アクションを使って、コードをチェックアウトします
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Gemini CLIを呼び出して、コードレビューを実行します
+      - name: Ask Gemini to review
+        uses: google-github-actions/run-gemini-cli@v1
+        with:
+          # ここでステップ2で設定したAPIキーを使います
+          gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
+          # Geminiにレビューを依頼するプロンプト（指示文）
+          prompt: "このプルリクエストのコードをレビューして、改善点を提案してください。"
